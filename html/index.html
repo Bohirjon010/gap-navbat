@@ -1479,7 +1479,7 @@
             <div class="form-grid">
               <div class="field" id="f-ism">
                 <label for="ism">Ism</label>
-                <input id="ism" type="text" placeholder="Masalan: Aziza" />
+                <input id="ism" type="text" placeholder="Masalan: Bohirjon" />
                 <div class="err">Ismni kiriting</div>
               </div>
               <div class="field" id="f-familiya">
@@ -1487,7 +1487,7 @@
                 <input
                   id="familiya"
                   type="text"
-                  placeholder="Masalan: Karimova"
+                  placeholder="Masalan: Akramov"
                 />
                 <div class="err">Familiyani kiriting</div>
               </div>
@@ -1496,7 +1496,7 @@
                 <input
                   id="tugilganYil"
                   type="number"
-                  placeholder="1998"
+                  placeholder="2010"
                   min="1920"
                   max="2026"
                 />
@@ -1715,7 +1715,9 @@
 
     <script>
       /* ---------- Ma'lumotlar (sessiya davomida xotirada saqlanadi) ---------- */
-      const STORAGE_KEY = "gap-navbati-data-v1";
+      const STORAGE_KEY = "gap-navbati-data-v3";
+      const LEGACY_STORAGE_KEY = "gap-navbati-data-v1";
+      const LEGACY_STORAGE_KEY_V2 = "gap-navbati-data-v2";
       const THEME_KEY = "gap-navbati-theme-v1";
       function iso(d) {
         return d.toISOString().slice(0, 10);
@@ -1728,70 +1730,10 @@
         return iso(d);
       }
 
-      const defaultNavbatlar = [
-        {
-          id: 1,
-          ism: "Malika",
-          familiya: "Abdullayeva",
-          tugilganYil: 1990,
-          kelishYili: 2026,
-          sana: addDays(0),
-          soat: "19:00",
-          izoh: "Oilaviy yig`ilish, mehmonxona zalida.",
-        },
-        {
-          id: 2,
-          ism: "Javlon",
-          familiya: "Karimov",
-          tugilganYil: 1985,
-          kelishYili: 2026,
-          sana: addDays(3),
-          soat: "18:30",
-          izoh: "",
-        },
-        {
-          id: 3,
-          ism: "Nodira",
-          familiya: "Yusupova",
-          tugilganYil: 1978,
-          kelishYili: 2026,
-          sana: addDays(7),
-          soat: "20:00",
-          izoh: "To`y marosimi oldidan.",
-        },
-        {
-          id: 4,
-          ism: "Bekzod",
-          familiya: "Rashidov",
-          tugilganYil: 1992,
-          kelishYili: 2027,
-          sana: addDays(21),
-          soat: "17:00",
-          izoh: "",
-        },
-        {
-          id: 5,
-          ism: "Gulnora",
-          familiya: "Islamova",
-          tugilganYil: 1965,
-          kelishYili: 2025,
-          sana: addDays(-10),
-          soat: "19:30",
-          izoh: "Bayram tadbiri.",
-        },
-        {
-          id: 6,
-          ism: "Otabek",
-          familiya: "Yuldashev",
-          tugilganYil: 1970,
-          kelishYili: 2025,
-          sana: addDays(-30),
-          soat: "18:00",
-          izoh: "",
-        },
-      ];
       function loadNavbatlar() {
         try {
+          localStorage.removeItem(LEGACY_STORAGE_KEY);
+          localStorage.removeItem(LEGACY_STORAGE_KEY_V2);
           const raw = localStorage.getItem(STORAGE_KEY);
           if (raw) {
             const parsed = JSON.parse(raw);
@@ -1800,7 +1742,7 @@
             }
           }
         } catch (e) {}
-        return defaultNavbatlar.map((item) => ({ ...item }));
+        return [];
       }
       function saveNavbatlar() {
         try {
