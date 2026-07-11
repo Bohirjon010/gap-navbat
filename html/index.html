@@ -296,8 +296,13 @@
         color: var(--ink-soft);
         border-radius: 10px;
       }
-      .mobile-menu a:hover {
+      .mobile-menu a:hover,
+      .mobile-menu a.active {
         background: var(--bg-soft);
+        color: var(--primary-dark);
+      }
+      html[data-theme="dark"] .mobile-menu a.active {
+        color: #4ade80;
       }
       .mobile-menu .btn {
         margin-top: 8px;
@@ -2214,6 +2219,66 @@
         { threshold: 0.12 },
       );
       document.querySelectorAll(".reveal").forEach((el) => io.observe(el));
+
+      /* ---------- Active menu ---------- */
+      const navLinks = Array.from(
+        document.querySelectorAll(".nav-center a, .mobile-menu a"),
+      ).filter((link) => link.getAttribute("href")?.startsWith("#"));
+      const watchedSections = [
+        "home",
+        "qoshish",
+        "navbatlar",
+        "stats",
+        "tarix",
+        "yordam",
+        "footer-contact",
+      ]
+        .map((id) => document.getElementById(id))
+        .filter(Boolean);
+      let activeSectionId = "home";
+
+      function setActiveMenu(hash) {
+        navLinks.forEach((link) => {
+          link.classList.toggle("active", link.getAttribute("href") === hash);
+        });
+      }
+
+      const activeObserver = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              activeSectionId = entry.target.id;
+              setActiveMenu(`#${activeSectionId}`);
+            }
+          });
+        },
+        {
+          rootMargin: "-22% 0px -58% 0px",
+          threshold: 0.01,
+        },
+      );
+      watchedSections.forEach((section) => activeObserver.observe(section));
+
+      navLinks.forEach((link) => {
+        link.addEventListener("click", () => {
+          const hash = link.getAttribute("href");
+          if (hash?.startsWith("#")) {
+            setActiveMenu(hash);
+          }
+        });
+      });
+
+      window.addEventListener("hashchange", () => {
+        if (location.hash) {
+          setActiveMenu(location.hash);
+        }
+      });
+
+      if (location.hash) {
+        setActiveMenu(location.hash);
+      } else {
+        setActiveMenu("#home");
+      }
 
       /* ---------- Ishga tushirish ---------- */
       renderAll();
