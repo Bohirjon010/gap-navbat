@@ -1732,6 +1732,7 @@
       const LEGACY_STORAGE_KEY = "gap-navbati-data-v1";
       const LEGACY_STORAGE_KEY_V2 = "gap-navbati-data-v2";
       const THEME_KEY = "gap-navbati-theme-v1";
+      const ADMIN_TELEGRAM_URL = "https://t.me/akramov_lvl";
       function iso(d) {
         return d.toISOString().slice(0, 10);
       }
@@ -2128,13 +2129,11 @@
         const n = navbatlar.find((x) => x.id === id);
         if (!n) return;
         const ok = confirm(
-          `${n.ism} ${n.familiya} navbatini o'chirmoqchimisiz?`,
+          `${n.ism} ${n.familiya} navbatini o'chirish uchun admin bilan Telegram orqali bog'laning.`,
         );
         if (!ok) return;
-        navbatlar = navbatlar.filter((x) => x.id !== id);
-        saveNavbatlar();
-        renderAll();
-        showToast("success", "Navbat o'chirildi");
+        window.open(ADMIN_TELEGRAM_URL, "_blank", "noopener");
+        showToast("success", "Admin Telegrami ochildi");
       }
 
       /* ---------- Batafsil ---------- */
