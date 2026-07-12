@@ -2000,6 +2000,7 @@
         ${n.izoh ? `<div class="pc-note">${n.izoh}</div>` : ""}
         <div class="pc-actions">
           <button onclick="openDetail(${n.id})">👁️ Batafsil</button>
+          <button class="danger" onclick="deleteNavbat(${n.id})">🗑️ O'chirish</button>
         </div>
       `;
           grid.appendChild(card);
@@ -2121,6 +2122,19 @@
       function resetForm() {
         form.reset();
         clearErrors();
+      }
+
+      function deleteNavbat(id) {
+        const n = navbatlar.find((x) => x.id === id);
+        if (!n) return;
+        const ok = confirm(
+          `${n.ism} ${n.familiya} navbatini o'chirmoqchimisiz?`,
+        );
+        if (!ok) return;
+        navbatlar = navbatlar.filter((x) => x.id !== id);
+        saveNavbatlar();
+        renderAll();
+        showToast("success", "Navbat o'chirildi");
       }
 
       /* ---------- Batafsil ---------- */
