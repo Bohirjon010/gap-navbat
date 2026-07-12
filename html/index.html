@@ -1496,16 +1496,15 @@
                 />
                 <div class="err">Familiyani kiriting</div>
               </div>
-              <div class="field" id="f-tugilganYil">
-                <label for="tugilganYil">Tug'ilgan yil</label>
+              <div class="field" id="f-telefon">
+                <label for="telefon">Telefon raqam</label>
                 <input
-                  id="tugilganYil"
-                  type="number"
-                  placeholder="2010"
-                  min="1920"
-                  max="2026"
+                  id="telefon"
+                  type="tel"
+                  inputmode="tel"
+                  placeholder="+998 90 123 45 67"
                 />
-                <div class="err">To'g'ri yil kiriting</div>
+                <div class="err">Telefon raqamni kiriting</div>
               </div>
               <div class="field" id="f-kelishYili">
                 <label for="kelishYili">Gap navbati keladigan yil</label>
@@ -1812,7 +1811,10 @@
 
         let list = navbatlar.filter((n) => {
           const matchesQ =
-            !q || (n.ism + " " + n.familiya).toLowerCase().includes(q);
+            !q ||
+            (n.ism + " " + n.familiya + " " + (n.telefon || ""))
+              .toLowerCase()
+              .includes(q);
           const matchesY = !fy || String(n.kelishYili) === fy;
           const matchesS = !fs || status(n.sana) === fs;
           return matchesQ && matchesY && matchesS;
@@ -1926,6 +1928,7 @@
           cake: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 21v-7a2 2 0 012-2h12a2 2 0 012 2v7M4 21h16M4 17h16M12 8V5M8 5s0-2 2-2 2 2 2 2M12 8s2 0 2-2-2-2-2-2"/></svg>`,
           calendar: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 10h18"/></svg>`,
           clock: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>`,
+          phone: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M22 16.92v3a2 2 0 01-2.18 2A19.8 19.8 0 013.11 5.18 2 2 0 015.1 3h3a2 2 0 012 1.72c.12.9.33 1.77.62 2.61a2 2 0 01-.45 2.11L9 10.71a16 16 0 004.29 4.29l1.27-1.27a2 2 0 012.11-.45c.84.29 1.71.5 2.61.62A2 2 0 0122 16.92z"/></svg>`,
           note: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 4h16v16H4z" opacity="0"/><path d="M7 3h10l4 4v14H7z" opacity="0"/><path d="M6 21h12a1 1 0 001-1V7l-4-4H7a1 1 0 00-1 1v16a1 1 0 001 1z"/><path d="M9 9h6M9 13h6M9 17h3"/></svg>`,
         };
         return icons[name];
@@ -1956,12 +1959,12 @@
             <div class="pc-avatar">${initials(n.ism, n.familiya)}</div>
             <div style="min-width:0;">
               <div class="pc-name">${n.ism} ${n.familiya}</div>
-              <div class="pc-year">Tug'ilgan: ${n.tugilganYil}</div>
             </div>
           </div>
           <span class="status-badge ${st}">${statusLabel(st)}</span>
         </div>
         <div class="pc-meta">
+          ${n.telefon ? `<div>${personSVG("phone")} ${n.telefon}</div>` : ""}
           <div>${personSVG("calendar")} ${formatDate(n.sana)} · ${n.kelishYili}-yil</div>
           <div>${personSVG("clock")} ${n.soat || "—"}</div>
         </div>
@@ -2019,7 +2022,7 @@
       const fields = [
         "ism",
         "familiya",
-        "tugilganYil",
+        "telefon",
         "kelishYili",
         "sana",
         "soat",
@@ -2041,9 +2044,8 @@
           document.getElementById("f-familiya").classList.add("invalid");
           ok = false;
         }
-        const ty = document.getElementById("tugilganYil").value;
-        if (!ty || ty < 1920 || ty > 2026) {
-          document.getElementById("f-tugilganYil").classList.add("invalid");
+        if (!document.getElementById("telefon").value.trim()) {
+          document.getElementById("f-telefon").classList.add("invalid");
           ok = false;
         }
         const ky = document.getElementById("kelishYili").value;
@@ -2075,7 +2077,7 @@
           id: nextId++,
           ism: document.getElementById("ism").value.trim(),
           familiya: document.getElementById("familiya").value.trim(),
-          tugilganYil: Number(document.getElementById("tugilganYil").value),
+          telefon: document.getElementById("telefon").value.trim(),
           kelishYili: Number(document.getElementById("kelishYili").value),
           sana: document.getElementById("sana").value,
           soat: document.getElementById("soat").value,
@@ -2099,7 +2101,7 @@
         const st = status(n.sana);
         document.getElementById("detailBody").innerHTML = `
       <div class="modal-detail-row">${personSVG("cake")}<div><div class="k">Ism Familiya</div><div class="v">${n.ism} ${n.familiya}</div></div></div>
-      <div class="modal-detail-row">${personSVG("cake")}<div><div class="k">Tug'ilgan yil</div><div class="v">${n.tugilganYil}</div></div></div>
+      ${n.telefon ? `<div class="modal-detail-row">${personSVG("phone")}<div><div class="k">Telefon raqam</div><div class="v">${n.telefon}</div></div></div>` : ""}
       <div class="modal-detail-row">${personSVG("calendar")}<div><div class="k">Gap navbati sanasi</div><div class="v">${formatDate(n.sana)} (${n.kelishYili}-yil)</div></div></div>
       <div class="modal-detail-row">${personSVG("clock")}<div><div class="k">Gap navbati vaqti</div><div class="v">${n.soat || "—"}</div></div></div>
       <div class="modal-detail-row"><span class="status-badge ${st}" style="margin-right:4px;">${statusLabel(st)}</span><div><div class="k">Holati</div></div></div>
