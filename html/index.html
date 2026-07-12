@@ -795,6 +795,15 @@
         color: var(--mute);
         flex-shrink: 0;
       }
+      .pc-meta a,
+      .modal-detail-row a.v {
+        color: var(--secondary);
+        text-decoration: none;
+      }
+      .pc-meta a:hover,
+      .modal-detail-row a.v:hover {
+        text-decoration: underline;
+      }
       .pc-note {
         font-size: 13px;
         color: var(--ink-soft);
@@ -1795,6 +1804,26 @@
       function initials(ism, familiya) {
         return (ism[0] || "") + (familiya[0] || "");
       }
+      function escapeHTML(value) {
+        return String(value || "").replace(
+          /[&<>"']/g,
+          (ch) =>
+            ({
+              "&": "&amp;",
+              "<": "&lt;",
+              ">": "&gt;",
+              '"': "&quot;",
+              "'": "&#39;",
+            })[ch],
+        );
+      }
+      function phoneHref(telefon) {
+        const cleaned = String(telefon || "")
+          .trim()
+          .replace(/[^\d+]/g, "")
+          .replace(/(?!^)\+/g, "");
+        return cleaned ? `tel:${cleaned}` : "#";
+      }
       function dateDistance(sana) {
         const current = new Date(sana + "T00:00:00");
         const diff = Math.round((current - today) / 86400000);
@@ -1964,7 +1993,7 @@
           <span class="status-badge ${st}">${statusLabel(st)}</span>
         </div>
         <div class="pc-meta">
-          ${n.telefon ? `<div>${personSVG("phone")} ${n.telefon}</div>` : ""}
+          ${n.telefon ? `<div>${personSVG("phone")} <a href="${phoneHref(n.telefon)}">${escapeHTML(n.telefon)}</a></div>` : ""}
           <div>${personSVG("calendar")} ${formatDate(n.sana)} · ${n.kelishYili}-yil</div>
           <div>${personSVG("clock")} ${n.soat || "—"}</div>
         </div>
@@ -2101,7 +2130,7 @@
         const st = status(n.sana);
         document.getElementById("detailBody").innerHTML = `
       <div class="modal-detail-row">${personSVG("cake")}<div><div class="k">Ism Familiya</div><div class="v">${n.ism} ${n.familiya}</div></div></div>
-      ${n.telefon ? `<div class="modal-detail-row">${personSVG("phone")}<div><div class="k">Telefon raqam</div><div class="v">${n.telefon}</div></div></div>` : ""}
+      ${n.telefon ? `<div class="modal-detail-row">${personSVG("phone")}<div><div class="k">Telefon raqam</div><a class="v" href="${phoneHref(n.telefon)}">${escapeHTML(n.telefon)}</a></div></div>` : ""}
       <div class="modal-detail-row">${personSVG("calendar")}<div><div class="k">Gap navbati sanasi</div><div class="v">${formatDate(n.sana)} (${n.kelishYili}-yil)</div></div></div>
       <div class="modal-detail-row">${personSVG("clock")}<div><div class="k">Gap navbati vaqti</div><div class="v">${n.soat || "—"}</div></div></div>
       <div class="modal-detail-row"><span class="status-badge ${st}" style="margin-right:4px;">${statusLabel(st)}</span><div><div class="k">Holati</div></div></div>
